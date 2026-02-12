@@ -84,7 +84,6 @@ public class Game {
     }
     
     /**
-     * TODO #3: Implement the moveLeft method
      * Requirements:
      * - Slide all tiles to the left (remove gaps)
      * - Merge adjacent tiles with same value
@@ -112,10 +111,10 @@ public class Game {
             int copyCount = 0;
             for(int col = 0; col < board[0].length; col++){
                 if(board[row][col] != 0) temp[copyCount++] = board[row][col];
-                temp[col] = board[row][col];
             }
-            //NOW WE DO THE HARD PART - MERGE AND STUFF
-            for(int col = 0; col < board[0].length; col++){
+            
+            //HARD PART - MERGE AND STUFF
+            for(int col = 0; col < board[0].length - 1; col++){
                 //merge + scooch
                 if(temp[col] == temp[col + 1]){
                     temp[col] = temp[col] * 2;
@@ -130,10 +129,7 @@ public class Game {
                     temp[board[0].length - 1] = 0;
                 }
             }
-
-
-
-
+            
             //check for differences
             for(int col = 0; col < board[0].length; col++){
                 if(temp[col] != board[row][col]){
@@ -143,11 +139,11 @@ public class Game {
             }
             
         }
+        if(moved) addRandomTile();
         return moved;
     }
     
     /**
-     * TODO #4: Implement the moveRight method
      * Requirements:
      * - Similar to moveLeft but in opposite direction
      * - Slide tiles to the right
@@ -156,12 +152,49 @@ public class Game {
      * Hint: Process from right to left instead of left to right
      */
     public boolean moveRight() {
-        // TODO: Complete this method
         boolean moved = false;
         
+        //check through every row
+        for(int row = 0; row < board.length; row++){
+            //temporary tool to reorganize the numbers
+            int[] temp = new int[BOARD_SIZE];
+
+            //SMARTER COPY: only copy over non-zeros, effectively shifting to the right
+            int copyCount = BOARD_SIZE - 1;
+            for(int col = BOARD_SIZE - 1; col > -1; col--){
+                if(board[row][col] != 0) temp[copyCount--] = board[row][col];
+            }
+            
+            //HARD PART - MERGE AND STUFF
+            for(int col = BOARD_SIZE - 1; col > 0; col--){
+                // Are you the same as the number before?
+                if(temp[col] == temp[col - 1]){
+                    temp[col] = temp[col] * 2;
+                    //merged items count for your total points
+                    score += temp[col];
+                    //scooch everything over once
+                    for(int scooch = col-1; scooch > 0; scooch--){
+                        temp[scooch] = temp[scooch - 1];
+                        
+                    }
+                    //add a zero at the end
+                    temp[board[0].length - 1] = 0;
+                }
+            }
+            
+            //check for differences
+            for(int col = BOARD_SIZE- 1; col > 0; col--){
+                if(temp[col] != board[row][col]){
+                    moved = true;
+                    board[row] = temp;
+                }
+            }
+            
+        }
+        if(moved) addRandomTile();
         return moved;
     }
-    
+
     /**
      * TODO #5: Implement the moveUp method
      * Requirements:
