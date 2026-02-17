@@ -121,7 +121,7 @@ public class Game {
                     //merged items count for your total points
                     score += temp[col];
                     //scooch everything over once
-                    for(int scooch = col+1; scooch < board[0].length - 1; scooch++){
+                    for(int scooch = col + 1; scooch < board[0].length - 1; scooch++){
                         temp[scooch] = temp[scooch + 1];
                         
                     }
@@ -162,7 +162,8 @@ public class Game {
             //SMARTER COPY: only copy over non-zeros, effectively shifting to the right
             int copyCount = BOARD_SIZE - 1;
             for(int col = BOARD_SIZE - 1; col > -1; col--){
-                if(board[row][col] != 0) temp[copyCount--] = board[row][col];
+                if(board[row][col] != 0) 
+                    temp[copyCount--] = board[row][col];
             }
             
             //HARD PART - MERGE AND STUFF
@@ -178,12 +179,12 @@ public class Game {
                         
                     }
                     //add a zero at the end
-                    temp[board[0].length - 1] = 0;
+                    temp[0] = 0;
                 }
             }
             
             //check for differences
-            for(int col = BOARD_SIZE- 1; col > 0; col--){
+            for(int col = BOARD_SIZE- 1; col > -1; col--){
                 if(temp[col] != board[row][col]){
                     moved = true;
                     board[row] = temp;
@@ -196,7 +197,7 @@ public class Game {
     }
 
     /**
-     * TODO #5: Implement the moveUp method
+
      * Requirements:
      * - Similar logic to moveLeft but operates on columns
      * - Slide tiles up
@@ -205,9 +206,50 @@ public class Game {
      * Hint: Work with columns instead of rows
      */
     public boolean moveUp() {
-        // TODO: Complete this method
         boolean moved = false;
-        
+
+        //check through every column
+        for(int col = 0; col < board[0].length; col++){
+            //temporary tool to reorganize the numbers
+            int[] temp = new int[BOARD_SIZE];
+
+            //SMARTER COPY: only copy over non-zeros, effectively shifting to the left
+            int copyCount = 0;
+            for(int row = 0; row < board.length; row++){
+                if(board[row][col] != 0) 
+                    temp[copyCount++] = board[row][col];
+            }
+            
+            //HARD PART - MERGE AND STUFF
+            for(int row = 0; row < board.length - 1; row++){
+                //merge + scooch
+                if(temp[row] == temp[row + 1]){
+                    temp[row] = temp[row] * 2;
+                    //merged items count for your total points
+                    score += temp[row];
+                    //scooch everything over once
+                    for(int scooch = row + 1; scooch < board.length; scooch++){
+                        temp[scooch] = temp[scooch + 1];
+                        
+                    }
+                    //add a zero at the end
+                    temp[board[0].length - 1] = 0;
+                }
+            }
+            
+            //check for differences
+            for(int row = 0; row < board[0].length; row++){
+                if(temp[row] != board[row][col]){
+                    moved = true;
+                    board[row] = temp;
+                }
+            }
+            // copy the contents of temp back to the column
+            
+            
+        }
+
+        if(moved) addRandomTile();
         return moved;
     }
     
