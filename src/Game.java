@@ -174,7 +174,7 @@ public class Game {
                     //merged items count for your total points
                     score += temp[col];
                     //scooch everything over once
-                    for(int scooch = col-1; scooch > 0; scooch--){
+                    for(int scooch = col - 1; scooch > 0; scooch--){
                         temp[scooch] = temp[scooch - 1];
                         
                     }
@@ -184,7 +184,7 @@ public class Game {
             }
             
             //check for differences
-            for(int col = BOARD_SIZE- 1; col > -1; col--){
+            for(int col = BOARD_SIZE - 1; col > -1; col--){
                 if(temp[col] != board[row][col]){
                     moved = true;
                     board[row] = temp;
@@ -213,27 +213,27 @@ public class Game {
             //temporary tool to reorganize the numbers
             int[] temp = new int[BOARD_SIZE];
 
-            //SMARTER COPY: only copy over non-zeros, effectively shifting to the left
+            //SMARTER COPY: only copy over non-zeros, effectively shifting up
             int copyCount = 0;
-            for(int row = 0; row < board.length; row++){
+            for(int row = 0; row < BOARD_SIZE; row++){
                 if(board[row][col] != 0) 
                     temp[copyCount++] = board[row][col];
             }
             
             //HARD PART - MERGE AND STUFF
-            for(int row = 0; row < board.length - 1; row++){
+            for(int row = 0; row < BOARD_SIZE - 1; row++){
                 //merge + scooch
                 if(temp[row] == temp[row + 1]){
                     temp[row] = temp[row] * 2;
                     //merged items count for your total points
                     score += temp[row];
                     //scooch everything over once
-                    for(int scooch = row + 1; scooch < board.length; scooch++){
+                    for(int scooch = row + 1; scooch < BOARD_SIZE - 1; scooch++){
                         temp[scooch] = temp[scooch + 1];
                         
                     }
                     //add a zero at the end
-                    temp[board[0].length - 1] = 0;
+                    temp[BOARD_SIZE - 1] = 0;
                 }
             }
             
@@ -241,11 +241,76 @@ public class Game {
             for(int row = 0; row < board[0].length; row++){
                 if(temp[row] != board[row][col]){
                     moved = true;
-                    board[row] = temp;
+                    
                 }
             }
-            // copy the contents of temp back to the column
+
+            if(moved){
+                //copy the column values from temp to board
+                for(int row = 0; row < BOARD_SIZE; row++){
+                   board[row][col] = temp[row];
+                }
+            }
             
+        }
+
+        if(moved) addRandomTile();
+        return moved;
+    }
+
+    
+    /**
+     * Requirements:
+     * - Similar to moveUp but in opposite direction
+     * - Slide tiles down
+     * - Merge from bottom to top
+     */
+    public boolean moveDown() {
+        boolean moved = false;
+        
+        //check through every column
+        for(int col = 0; col < board[0].length; col++){
+            //temporary tool to reorganize the numbers
+            int[] temp = new int[BOARD_SIZE];
+
+            //SMARTER COPY: only copy over non-zeros, effectively shifting up
+            int copyCount = BOARD_SIZE - 1;
+            for(int row = BOARD_SIZE - 1; row > -1; row--){
+                if(board[row][col] != 0) 
+                    temp[copyCount--] = board[row][col];
+            }
+            
+            //HARD PART - MERGE AND STUFF
+            for(int row = BOARD_SIZE - 1; row > 0; row--){
+                //merge + scooch
+                if(temp[row] == temp[row - 1]){
+                    temp[row] = temp[row] * 2;
+                    //merged items count for your total points
+                    score += temp[row];
+                    //scooch everything over once
+                    for(int scooch = row - 1; scooch > 0; scooch--){
+                        temp[scooch] = temp[scooch - 1];
+                        
+                    }
+                    //add a zero at the end
+                    temp[0] = 0;
+                }
+            }
+            
+            //check for differences
+            for(int row = BOARD_SIZE - 1; row > -1; row--){
+                if(temp[row] != board[row][col]){
+                    moved = true;
+                    
+                }
+            }
+
+            if(moved){
+                //copy the column values from temp to board
+                for(int row = BOARD_SIZE - 1; row > -1; row--){
+                   board[row][col] = temp[row];
+                }
+            }
             
         }
 
@@ -254,21 +319,6 @@ public class Game {
     }
     
     /**
-     * TODO #6: Implement the moveDown method
-     * Requirements:
-     * - Similar to moveUp but in opposite direction
-     * - Slide tiles down
-     * - Merge from bottom to top
-     */
-    public boolean moveDown() {
-        // TODO: Complete this method
-        boolean moved = false;
-        
-        return moved;
-    }
-    
-    /**
-     * TODO #7: Implement method to check if the player has won
      * Requirements:
      * - Return true if any tile has value >= WIN_VALUE (2048)
      * - Once won, should continue returning true (use hasWon field)
@@ -276,9 +326,14 @@ public class Game {
      * Hint: Check all tiles and update the hasWon field
      */
     public boolean hasWon() {
-        // TODO: Complete this method
-        
-        return false;
+        boolean hasWon = false;
+        for(int[] row : board){
+            for(int col : row){
+                if(col >= 2048) hasWon = true;
+            }
+        }
+
+        return hasWon;
     }
     
     /**
