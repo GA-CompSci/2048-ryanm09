@@ -337,7 +337,6 @@ public class Game {
     }
     
     /**
-     * TODO #8: Implement method to check if game is over
      * Requirements:
      * - Game is over when:
      *   1. No empty cells remain AND
@@ -347,8 +346,11 @@ public class Game {
      * Hint: First check for empty cells, then check all adjacent pairs
      */
     public boolean isGameOver() {
-        // TODO: Complete this method
-        
+        for(int row = 0; row < BOARD_SIZE; row++){
+            for(int col = 0; col < board[0].length; col++){
+                if(getEmptyCells().isEmpty() && moveUp() == false && moveDown() == false && moveRight() == false && moveLeft() == false) return true;
+            }
+        }
         return false;
     }
     
