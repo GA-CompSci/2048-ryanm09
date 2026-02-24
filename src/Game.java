@@ -326,10 +326,10 @@ public class Game {
      * Hint: Check all tiles and update the hasWon field
      */
     public boolean hasWon() {
-        boolean hasWon = false;
+        hasWon = false;
         for(int[] row : board){
             for(int col : row){
-                if(col >= 2048) hasWon = true;
+                if(col >= WIN_VALUE) hasWon = true;
             }
         }
 
@@ -346,12 +346,13 @@ public class Game {
      * Hint: First check for empty cells, then check all adjacent pairs
      */
     public boolean isGameOver() {
+        gameOver = false;
         for(int row = 0; row < BOARD_SIZE; row++){
             for(int col = 0; col < board[0].length; col++){
-                if(getEmptyCells().isEmpty() && moveUp() == false && moveDown() == false && moveRight() == false && moveLeft() == false) return true;
+                if(getEmptyCells().isEmpty() && moveUp() == false && moveDown() == false && moveRight() == false && moveLeft() == false) gameOver = true;
             }
         }
-        return false;
+        return gameOver;
     }
     
     // ===================== PROVIDED METHODS - DO NOT MODIFY =====================
@@ -375,7 +376,6 @@ public class Game {
     public int getScore() {
         return score;
     }
-    
     /**
      * Gets the board size
      */
